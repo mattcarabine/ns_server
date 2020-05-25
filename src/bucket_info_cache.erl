@@ -130,7 +130,8 @@ alternate_addresses_json(Node, Config, WantedPorts) ->
 build_nodes_ext([] = _Nodes, _Config, NodesExtAcc) ->
     lists:reverse(NodesExtAcc);
 build_nodes_ext([Node | RestNodes], Config, NodesExtAcc) ->
-    Services = [rest | ns_cluster_membership:node_active_services(Config, Node)],
+    Services1 = [rest | ns_cluster_membership:node_active_services(Config, Node)],
+    Services = Services1 ++ [health],
     NI1 = maybe_build_ext_hostname(Node),
     NI2 = case Node =:= node() of
               true ->

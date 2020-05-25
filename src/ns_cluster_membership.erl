@@ -267,7 +267,7 @@ enterprise_only_services() ->
 
 services_by_version() ->
     [{?PREHISTORIC, [kv, n1ql, index, fts]},
-     {?VERSION_55,  [cbas, eventing]}].
+     {?VERSION_55,  [cbas, eventing, health]}].
 
 topology_aware_services_by_version() ->
     [{?PREHISTORIC, [fts, index]},
@@ -310,6 +310,8 @@ get_service_map(Config, kv) ->
     %% kv is special; just return active kv nodes
     ActiveNodes = active_nodes(Config),
     service_nodes(Config, ActiveNodes, kv);
+get_service_map(Config, health) ->
+	active_nodes(Config);
 get_service_map(Config, Service) ->
     ns_config:search(Config, {service_map, Service}, []).
 

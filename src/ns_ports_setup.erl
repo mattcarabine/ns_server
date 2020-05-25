@@ -321,7 +321,11 @@ goport_defs() ->
           exe = "eventing-producer",
           service = eventing,
           rpc = eventing,
-          log = ?EVENTING_LOG_FILENAME}].
+          log = ?EVENTING_LOG_FILENAME},
+     #def{id = health,
+          exe = "health-check",
+          rpc = health,
+          log = "health.log"}].
 
 build_goport_spec(#def{id = SpecId,
                        exe = Executable,
@@ -404,6 +408,12 @@ goport_args(indexer, Config, _Cmd, NodeUUID) ->
          "-nodeUUID=" ++ NodeUUID,
          "-ipv6=" ++ atom_to_list(misc:is_ipv6()),
          "-isEnterprise=" ++ atom_to_list(cluster_compat_mode:is_enterprise())];
+
+
+goport_args(health, Config, _Cmd, NodeUUID) -> 
+	RestPort = service_ports:get_port(rest_port, Config),
+    HttpArg = build_port_arg("-port", "", health_port, Config),
+    [HttpArg, "-cluster=" ++ misc:local_url(RestPort, [no_scheme])];
 
 goport_args(fts, Config, _Cmd, NodeUUID) ->
     NsRestPort = service_ports:get_port(rest_port, Config),
